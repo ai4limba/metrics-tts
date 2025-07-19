@@ -218,6 +218,15 @@ def main():
         "Samples-XTTSv2-SardinianVox-v2",     # SardinianVox-finetuned XTTSv2 synthesized audios      (SardinianVox dataset)
         "Samples-F5TTS-Base-SardinianVox",   # non-finetuned F5TTS synthesized audios                (SardinianVox dataset)
         "Samples-F5TTS-SardinianVox",        # SardinianVox-finetuned F5TTS synthesized audios       (SardinianVox dataset)
+        # Watermarks
+        "Samples-XTTSv2-Base-Mannigos-Watermarked",      
+        "Samples-XTTSv2-Mannigos-v2-Watermarked",        
+        "Samples-F5TTS-Base-Mannigos-Watermarked",       
+        "Samples-F5TTS-Mannigos-v1-Watermarked",         
+        "Samples-XTTSv2-Base-SardinianVox-Watermarked",  
+        "Samples-XTTSv2-SardinianVox-v2-Watermarked",    
+        "Samples-F5TTS-Base-SardinianVox-Watermarked",   
+        "Samples-F5TTS-SardinianVox-Watermarked",        
     ]
     
     results = []

@@ -171,20 +171,37 @@ def evaluate_folder(root_dir, folder_name, dnsmos_model, squim_model, srdorigin_
         print(f"WARNING: No valid samples found in folder {folder_name}.")
         return None
     
-    print(f"{len(dnsmos_scores)} valid samples evaluated in {folder_name}.")
+    # SNR - Signal Noise Ratio & BER - Bit Error Rate if computed
+    if folder_name.split("-")[-1] == "Watermarked": # if the folder is a watermarked one then we load the watermarking results
+        watermarking_results = pd.read_csv(os.path.join(root_dir, "watermarking_results.csv"))
+        
+        # Extract the SNR and BER values for the current folder
+        snr_std = watermarking_results.loc[watermarking_results['Folder'] == "-".join(folder_name.split("-")[:-1]), 'SNR - Std'].values
+        snr_mean = watermarking_results.loc[watermarking_results['Folder'] == "-".join(folder_name.split("-")[:-1]), 'SNR - Avg'].values
+        ber_std = watermarking_results.loc[watermarking_results['Folder'] == "-".join(folder_name.split("-")[:-1]), 'BER - Std'].values
+        ber_mean = watermarking_results.loc[watermarking_results['Folder'] == "-".join(folder_name.split("-")[:-1]), 'BER - Avg'].values
+    else:
+        snr_std = None
+        snr_mean = None
+        ber_std = None
+        ber_mean = None
     
     return {
         "ModelName": "-".join(folder_name.split("-")[1:]),
         "DNSMOSPro - Std": round(np.std(dnsmos_scores), 2),
         "DNSMOSPro - Avg": round(np.mean(dnsmos_scores), 2),
-        "STOI - Std": round(np.std(stoi_scores), 2),
-        "STOI - Avg": round(np.mean(stoi_scores), 2),
         "PESQ - Std": round(np.std(pesq_scores), 2),
         "PESQ - Avg": round(np.mean(pesq_scores), 2),
+        "STOI - Std": round(np.std(stoi_scores), 2),
+        "STOI - Avg": round(np.mean(stoi_scores), 2),
         "SI-SDR - Std": round(np.std(sisdr_scores), 2),
         "SI-SDR - Avg": round(np.mean(sisdr_scores), 2),
         "SrdOrigin - Std": round(np.std(srd_origin), 2),
-        "SrdOrigin - Avg": round(np.mean(srd_origin), 2)
+        "SrdOrigin - Avg": round(np.mean(srd_origin), 2),
+        "SNR - Std": round(snr_std[0], 2) if snr_std is not None else None,
+        "SNR - Avg": round(snr_mean[0], 2) if snr_mean is not None else None,
+        "BER - Std": round(ber_std[0], 2) if ber_std is not None else None,
+        "BER - Avg": round(ber_mean[0], 2) if ber_mean is not None else None
     } 
         
 
@@ -210,14 +227,14 @@ def main():
     
     # These are the folder names of the samples we want to evaluate
     samples_folders = [
-        "Samples-XTTSv2-Base-Mannigos",      # non-finetuned XTTSv2 synthesized audios               (Mannigos dataset)
-        "Samples-XTTSv2-Mannigos-v2",        # Mannigos-finetuned XTTSv2 synthesized audios          (Mannigos dataset)
-        "Samples-F5TTS-Base-Mannigos",       # non-finetuned F5TTS synthesized audios                (Mannigos dataset)
-        "Samples-F5TTS-Mannigos-v1",         # Mannigos-finetuned F5TTS synthesized audios          (Mannigos dataset)
-        "Samples-XTTSv2-Base-SardinianVox",  # non-finetuned XTTSv2 synthesized audios               (SardinianVox dataset)
-        "Samples-XTTSv2-SardinianVox-v2",     # SardinianVox-finetuned XTTSv2 synthesized audios      (SardinianVox dataset)
-        "Samples-F5TTS-Base-SardinianVox",   # non-finetuned F5TTS synthesized audios                (SardinianVox dataset)
-        "Samples-F5TTS-SardinianVox",        # SardinianVox-finetuned F5TTS synthesized audios       (SardinianVox dataset)
+        # "Samples-XTTSv2-Base-Mannigos",      # non-finetuned XTTSv2 synthesized audios               (Mannigos dataset)
+        # "Samples-XTTSv2-Mannigos-v2",        # Mannigos-finetuned XTTSv2 synthesized audios          (Mannigos dataset)
+        # "Samples-F5TTS-Base-Mannigos",       # non-finetuned F5TTS synthesized audios                (Mannigos dataset)
+        # "Samples-F5TTS-Mannigos-v1",         # Mannigos-finetuned F5TTS synthesized audios          (Mannigos dataset)
+        # "Samples-XTTSv2-Base-SardinianVox",  # non-finetuned XTTSv2 synthesized audios               (SardinianVox dataset)
+        # "Samples-XTTSv2-SardinianVox-v2",     # SardinianVox-finetuned XTTSv2 synthesized audios      (SardinianVox dataset)
+        # "Samples-F5TTS-Base-SardinianVox",   # non-finetuned F5TTS synthesized audios                (SardinianVox dataset)
+        # "Samples-F5TTS-SardinianVox",        # SardinianVox-finetuned F5TTS synthesized audios       (SardinianVox dataset)
         # Watermarks
         "Samples-XTTSv2-Base-Mannigos-Watermarked",      
         "Samples-XTTSv2-Mannigos-v2-Watermarked",        
